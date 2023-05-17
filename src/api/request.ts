@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { IGetThreadPayload, ILoginPayload, ILoginRes } from './type';
+import {
+  IGetTeamPayload,
+  IGetTeamRes,
+  IGetThreadPayload,
+  ILoginPayload,
+  ILoginRes,
+} from './type';
 import { store } from 'src/store';
 
 export const loginReq = async (payload: ILoginPayload): Promise<ILoginRes> => {
@@ -13,4 +19,14 @@ export const getThread = async (payload: IGetThreadPayload) => {
     `/api/get-thread?tmid=${payload.tmid}&userId=${userId}&authToken=${authToken}`
   );
   return data.data;
+};
+
+export const getTeam = async (
+  payload: IGetTeamPayload
+): Promise<IGetTeamRes> => {
+  const { authToken, userId } = store.getState().auth;
+  const { data } = await axios.get(
+    `/api/get-team?teamName=${payload.teamName}&userId=${userId}&authToken=${authToken}`
+  );
+  return data.teamInfo;
 };

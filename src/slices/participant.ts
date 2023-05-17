@@ -1,14 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'src/store';
+import { IParticipant } from 'src/types/participant';
 
 interface ParticipantState {
-  userId: string;
-  authToken: string;
+  participants: IParticipant[];
 }
 
 const initialState: ParticipantState = {
-  userId: '',
-  authToken: '',
+  participants: [],
 };
 
 export const participantSlice = createSlice({

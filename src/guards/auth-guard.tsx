@@ -1,17 +1,10 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useAuth } from 'src/hooks/use-auth';
 import { useRouter } from 'src/hooks/use-router';
 import { paths } from 'src/paths';
-import { Issuer } from 'src/utils/auth';
-
-const loginPaths: Record<Issuer, string> = {
-  [Issuer.Amplify]: paths.auth.amplify.login,
-  [Issuer.Auth0]: paths.auth.auth0.login,
-  [Issuer.Firebase]: paths.auth.firebase.login,
-  [Issuer.JWT]: paths.auth.jwt.login
-};
+import { useSelector } from 'src/store';
+import { getAuthData } from 'src/slices/auth';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -20,21 +13,20 @@ interface AuthGuardProps {
 export const AuthGuard: FC<AuthGuardProps> = (props) => {
   const { children } = props;
   const router = useRouter();
-  const { isAuthenticated, issuer } = useAuth();
+  const { authToken } = useSelector(getAuthData);
   const [checked, setChecked] = useState(false);
 
-  const check = useCallback(
-    () => {
-      if (!isAuthenticated) {
-        const searchParams = new URLSearchParams({ returnTo: window.location.href }).toString();
-        const href = loginPaths[issuer] + `?${searchParams}`;
-        router.replace(href);
-      } else {
-        setChecked(true);
-      }
-    },
-    [isAuthenticated, issuer, router]
-  );
+  const check = useCallback(() => {
+    if (!authToken) {
+      const searchParams = new URLSearchParams({
+        returnTo: window.location.href,
+      }).toString();
+      const href = paths.login + `?${searchParams}`;
+      router.replace(href);
+    } else {
+      setChecked(true);
+    }
+  }, [authToken, router]);
 
   // Only check on mount, this allows us to redirect the user manually when auth state changes
   useEffect(
@@ -56,5 +48,5 @@ export const AuthGuard: FC<AuthGuardProps> = (props) => {
 };
 
 AuthGuard.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };

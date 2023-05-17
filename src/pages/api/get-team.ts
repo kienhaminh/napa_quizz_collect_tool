@@ -6,8 +6,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { teamName, userId, authToken } = req.body;
-    const { data } = await axios.post(
+    const { teamName, userId, authToken } = req.query;
+    const { data } = await axios.get(
       `https://chat.napaglobal.com/api/v1/teams.info?teamName=${teamName}`,
       {
         headers: {
