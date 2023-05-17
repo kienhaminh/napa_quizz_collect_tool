@@ -19,7 +19,7 @@ const QuestionList = () => {
               username: item[1],
             };
           });
-          dispatch(setQuestions(questionList));
+          dispatch(setQuestions([]));
         }
       },
     });
