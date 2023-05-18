@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'src/store';
 import { IParticipant } from 'src/types/participant';
 
@@ -14,13 +14,14 @@ export const participantSlice = createSlice({
   name: 'participant',
   initialState,
   reducers: {
-    setParticipant: (state, action) => {
-      return { ...state, action };
+    setParticipant: (state, action: PayloadAction<IParticipant[]>) => {
+      return { ...state, participants: action.payload };
     },
   },
 });
 
-export const getParticipant = (state: RootState) => state.participant;
+export const getParticipants = (state: RootState) =>
+  state.participant.participants;
 
 export const { setParticipant } = participantSlice.actions;
 export const reducer = participantSlice.reducer;

@@ -1,40 +1,147 @@
-import { Box, Grid } from '@mui/material';
+import { useState, useMemo } from 'react';
+import { Box, Grid, Stack } from '@mui/material';
 import ParticipantCard from './participant-card';
-import { useSelector } from 'src/store';
-import { getParticipant } from 'src/slices/participant';
+import { useDispatch, useSelector } from 'src/store';
+import { getParticipants, setParticipant } from 'src/slices/participant';
 import { FileDropzone } from 'src/components/file-dropzone';
+import Papa from 'papaparse';
+import { getRooms } from 'src/api/request';
+import { LoadingButton } from '@mui/lab';
+import { useLoading } from 'src/hooks/use-loading';
+
+interface Answer {
+  username: string;
+  answer: string;
+}
 
 const ParticipantList = () => {
-  const participants = useSelector(getParticipant);
+  const dispatch = useDispatch();
+  const participants = useSelector(getParticipants);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const { loading, toggle } = useLoading();
+
+  const handleParticipantData = (file: File) => {
+    Papa.parse(file, {
+      complete: (results) => {
+        if (results.data) {
+          const data = results.data
+            .filter((item: any) => item.length === 2 && item[1].includes('.'))
+            .map((item: any) => {
+              return {
+                name: item[0].trim(),
+                username: item[1].trim(),
+                active: true,
+              };
+            });
+          dispatch(setParticipant(data));
+        }
+      },
+    });
+  };
+
+  const getAnswer = async () => {
+    if (Array.isArray(participants) && participants.length > 0) {
+      (async () => {
+        try {
+          toggle();
+          const res = await getRooms();
+          if (res && res.length > 0) {
+            const answer = res
+              .filter(
+                (item) =>
+                  Array.isArray(item.usernames) &&
+                  item.usernames.length === 2 &&
+                  participants.findIndex((participant) => {
+                    if (
+                      !Array.isArray(item.usernames) ||
+                      item.usernames.length < 2
+                    ) {
+                      return false;
+                    }
+                    return (
+                      item.usernames[0] === participant.username ||
+                      item.usernames[1] === participant.username
+                    );
+                  }) > -1
+              )
+              .map((item) => {
+                return {
+                  username: item.usernames
+                    ? item.usernames.find(
+                        (username) => username !== 'kien.ha'
+                      ) || ''
+                    : '',
+                  answer: item.lastMessage ? item.lastMessage.msg : '',
+                };
+              });
+            setAnswers(answer);
+          }
+          toggle();
+        } catch (err) {
+          console.log(err);
+          toggle();
+        }
+      })();
+    }
+  };
+
+  const renderedParticipants = useMemo(() => {
+    if (!Array.isArray(participants) || participants.length === 0) return [];
+    return participants.map((participant) => {
+      return {
+        ...participant,
+        answer:
+          answers.find((answer) => answer.username === participant.username)
+            ?.answer || '',
+      };
+    });
+  }, [participants, answers]);
 
   if (!Array.isArray(participants) || participants.length === 0) {
     return (
       <Box p={2}>
-        <FileDropzone caption="Participants list" />
+        <FileDropzone
+          caption="Participants list"
+          onDrop={(files) => {
+            if (files.length > 0) {
+              handleParticipantData(files[0]);
+            }
+          }}
+        />
       </Box>
     );
   }
 
   return (
-    <Grid
-      container
-      spacing={1}
-      p={1}
-    >
+    <Box>
+      <Stack p={2}>
+        <LoadingButton
+          variant="contained"
+          loading={loading}
+          onClick={getAnswer}
+        >
+          Fetch Answer
+        </LoadingButton>
+      </Stack>
       <Grid
-        item
-        xs={3}
+        container
+        spacing={1}
+        p={1}
       >
-        <ParticipantCard
-          data={{
-            username: 'kien.ha',
-            name: 'Ha Minh Kien',
-            active: true,
-          }}
-          answer="aaaaaaaaaa"
-        />
+        {renderedParticipants.map((item) => (
+          <Grid
+            item
+            xs={3}
+            key={item.name}
+          >
+            <ParticipantCard
+              data={item}
+              answer={item.answer}
+            />
+          </Grid>
+        ))}
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 
