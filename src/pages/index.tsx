@@ -1,15 +1,22 @@
-import { Box, Typography, Grid } from '@mui/material';
+import { Box } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { Seo } from 'src/components/seo';
 import CountDownTimer from 'src/sections/home/countdown-timer';
 import ParticipantList from 'src/sections/home/participant-list';
-import SettingDialog from 'src/sections/home/setting-dialog';
-import { getTeamInfo, setTeamInfo } from 'src/slices/game';
-import { useDispatch, useSelector } from 'src/store';
+import { getAuthData } from 'src/slices/auth';
+import { useSelector } from 'src/store';
 import type { Page as PageType } from 'src/types/page';
-import { ITeamInfo } from 'src/types/team';
 
 const Page: PageType = () => {
-  const dispatch = useDispatch();
+  const authData = useSelector(getAuthData);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authData.authToken || !authData.userId) {
+      router.push('/login');
+    }
+  }, [authData, router]);
 
   return (
     <>
