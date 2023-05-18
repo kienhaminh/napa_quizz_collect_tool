@@ -142,6 +142,20 @@ const ParticipantList = () => {
           xs={3}
         >
           <LoadingButton
+            variant="contained"
+            fullWidth
+            color="secondary"
+            loading={loading}
+            onClick={() => setAnswers([])}
+          >
+            Clear Answer
+          </LoadingButton>
+        </Grid>
+        <Grid
+          item
+          xs={3}
+        >
+          <LoadingButton
             fullWidth
             loading={loading}
             onClick={clearParticipants}

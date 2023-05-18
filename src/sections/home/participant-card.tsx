@@ -30,7 +30,7 @@ const ParticipantCard = ({ data, answer }: Props) => {
         <Stack
           spacing={1}
           pr={2}
-          sx={{ opacity: data.active ? 1 : 0.5 }}
+          sx={{ opacity: data.active ? 1 : 0.4 }}
         >
           <Typography variant="h6">{data.name}</Typography>
           <Typography>Answer: {answer}</Typography>
