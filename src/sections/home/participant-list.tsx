@@ -20,6 +20,10 @@ const ParticipantList = () => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const { loading, toggle } = useLoading();
 
+  const clearParticipants = () => {
+    dispatch(setParticipant([]));
+  };
+
   const handleParticipantData = (file: File) => {
     Papa.parse(file, {
       complete: (results) => {
@@ -114,15 +118,38 @@ const ParticipantList = () => {
 
   return (
     <Box>
-      <Stack p={2}>
-        <LoadingButton
-          variant="contained"
-          loading={loading}
-          onClick={getAnswer}
+      <Grid
+        container
+        p={2}
+        spacing={2}
+        justifyContent="center"
+      >
+        <Grid
+          item
+          xs={3}
         >
-          Fetch Answer
-        </LoadingButton>
-      </Stack>
+          <LoadingButton
+            variant="contained"
+            fullWidth
+            loading={loading}
+            onClick={getAnswer}
+          >
+            Fetch Answer
+          </LoadingButton>
+        </Grid>
+        <Grid
+          item
+          xs={3}
+        >
+          <LoadingButton
+            fullWidth
+            loading={loading}
+            onClick={clearParticipants}
+          >
+            Clear All Participant
+          </LoadingButton>
+        </Grid>
+      </Grid>
       <Grid
         container
         spacing={1}
@@ -131,7 +158,7 @@ const ParticipantList = () => {
         {renderedParticipants.map((item) => (
           <Grid
             item
-            xs={3}
+            xs={4}
             key={item.name}
           >
             <ParticipantCard

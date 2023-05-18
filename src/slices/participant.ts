@@ -17,11 +17,20 @@ export const participantSlice = createSlice({
     setParticipant: (state, action: PayloadAction<IParticipant[]>) => {
       return { ...state, participants: action.payload };
     },
+    setParticipantDetail: (state, action: PayloadAction<IParticipant>) => {
+      const changedParticipant = state.participants.findIndex(
+        (participant) => participant.username === action.payload.username
+      );
+      const newParticipants = [...state.participants];
+      newParticipants[changedParticipant] = action.payload;
+      return { ...state, participants: newParticipants };
+    },
   },
 });
 
 export const getParticipants = (state: RootState) =>
   state.participant.participants;
 
-export const { setParticipant } = participantSlice.actions;
+export const { setParticipant, setParticipantDetail } =
+  participantSlice.actions;
 export const reducer = participantSlice.reducer;

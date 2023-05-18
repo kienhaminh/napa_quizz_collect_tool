@@ -1,5 +1,6 @@
 import { Box, Typography, Grid } from '@mui/material';
 import { Seo } from 'src/components/seo';
+import CountDownTimer from 'src/sections/home/countdown-timer';
 import ParticipantList from 'src/sections/home/participant-list';
 import SettingDialog from 'src/sections/home/setting-dialog';
 import { getTeamInfo, setTeamInfo } from 'src/slices/game';
@@ -9,11 +10,6 @@ import { ITeamInfo } from 'src/types/team';
 
 const Page: PageType = () => {
   const dispatch = useDispatch();
-  const teamInfo = useSelector(getTeamInfo);
-
-  const onSubmitTeamInfo = (teamInfo: ITeamInfo) => {
-    dispatch(setTeamInfo(teamInfo));
-  };
 
   return (
     <>
@@ -22,6 +18,9 @@ const Page: PageType = () => {
         component="main"
         minHeight="100vh"
       >
+        <Box>
+          <CountDownTimer />
+        </Box>
         <ParticipantList />
       </Box>
     </>

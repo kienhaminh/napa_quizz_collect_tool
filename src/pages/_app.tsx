@@ -100,7 +100,7 @@ const App = (props: AppProps) => {
                               ) : (
                                 <>
                                   {getLayout(<Component {...pageProps} />)}
-                                  <SettingsButton
+                                  {/* <SettingsButton
                                     onClick={settings.handleDrawerOpen}
                                   />
                                   <SettingsDrawer
@@ -120,7 +120,7 @@ const App = (props: AppProps) => {
                                       layout: settings.layout,
                                       navColor: settings.navColor,
                                     }}
-                                  />
+                                  /> */}
                                 </>
                               )}
                               <Toaster />
