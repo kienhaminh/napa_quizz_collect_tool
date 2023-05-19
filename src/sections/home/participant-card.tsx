@@ -4,11 +4,12 @@ import { useDispatch } from 'src/store';
 import { IParticipant } from 'src/types/participant';
 
 interface Props {
+  id: number;
   data: IParticipant;
   answer: string;
 }
 
-const ParticipantCard = ({ data, answer }: Props) => {
+const ParticipantCard = ({ id, data, answer }: Props) => {
   const dispatch = useDispatch();
   const active = data.active;
 
@@ -32,7 +33,9 @@ const ParticipantCard = ({ data, answer }: Props) => {
           pr={2}
           sx={{ opacity: data.active ? 1 : 0.4 }}
         >
-          <Typography variant="h6">{data.name}</Typography>
+          <Typography variant="h6">
+            {id}.{data.name}
+          </Typography>
           <Typography>Answer: {answer}</Typography>
         </Stack>
         <div>

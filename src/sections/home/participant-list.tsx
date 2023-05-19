@@ -91,12 +91,14 @@ const ParticipantList = () => {
 
   const renderedParticipants = useMemo(() => {
     if (!Array.isArray(participants) || participants.length === 0) return [];
-    return participants.map((participant) => {
+    return participants.map((participant, index) => {
       return {
+        id: index + 1,
         ...participant,
-        answer:
-          answers.find((answer) => answer.username === participant.username)
-            ?.answer || '',
+        answer: participant.active
+          ? answers.find((answer) => answer.username === participant.username)
+              ?.answer || ''
+          : '',
       };
     });
   }, [participants, answers]);
@@ -176,6 +178,7 @@ const ParticipantList = () => {
             key={item.name}
           >
             <ParticipantCard
+              id={item.id}
               data={item}
               answer={item.answer}
             />

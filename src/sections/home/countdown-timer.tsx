@@ -1,18 +1,22 @@
 import { Stack, Typography, Button } from '@mui/material';
 import Countdown, { CountdownRenderProps } from 'react-countdown';
 import { useRef, useState } from 'react';
+import { useAudio } from 'src/hooks/use-audio';
 
 const CountDownTimer = () => {
+  const [, toggle, reset] = useAudio('/assets/countdown-effect.mp3');
   const [k, setK] = useState(false);
   const countdownRef = useRef<any>();
 
   const onStartCountDown = () => {
     countdownRef.current?.start();
+    toggle();
   };
 
   const onResetCountdown = () => {
     countdownRef.current?.stop();
     setK((prev) => !prev);
+    reset();
   };
 
   const renderer = ({
